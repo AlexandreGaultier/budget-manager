@@ -38,6 +38,9 @@ export const TransactionForm = () => {
     });
   };
 
+  const expenseCategories = categories.filter(cat => cat.type === 'expense');
+  const incomeCategories = categories.filter(cat => cat.type === 'income');
+
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
       <h3>Nouvelle transaction</h3>
@@ -58,32 +61,34 @@ export const TransactionForm = () => {
         <button
           type="button"
           className={`${styles.typeButton} ${formData.type === 'expense' ? styles.active : ''} ${styles.expenseButton}`}
-          onClick={() => setFormData(prev => ({ ...prev, type: 'expense' }))}
+          onClick={() => setFormData(prev => ({ ...prev, type: 'expense', category: '' }))}
         >
           Dépense
         </button>
         <button
           type="button"
           className={`${styles.typeButton} ${formData.type === 'income' ? styles.active : ''} ${styles.incomeButton}`}
-          onClick={() => setFormData(prev => ({ ...prev, type: 'income' }))}
+          onClick={() => setFormData(prev => ({ ...prev, type: 'income', category: '' }))}
         >
           Revenu
         </button>
       </div>
 
-      <div className={styles.categoryGrid}>
-        {categories
-          .filter(cat => cat.type === formData.type)
-          .map(cat => (
+      <div className={styles.categoriesSection}>
+        <h4 className={styles.categoryTitle}>Catégorie</h4>
+        <div className={styles.categoryGrid}>
+          {(formData.type === 'expense' ? expenseCategories : incomeCategories).map(cat => (
             <button
               key={cat.id}
               type="button"
               className={`${styles.categoryButton} ${formData.category === cat.id ? styles.active : ''}`}
               onClick={() => setFormData(prev => ({ ...prev, category: cat.id }))}
             >
-              {cat.name}
+              <span className={styles.categoryIcon}>{cat.icon}</span>
+              <span className={styles.categoryName}>{cat.name}</span>
             </button>
           ))}
+        </div>
       </div>
 
       <div className={styles.formGroup}>

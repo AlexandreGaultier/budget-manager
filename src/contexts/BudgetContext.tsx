@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Transaction, Category, MonthlyBudget } from '../types';
+import { defaultCategories } from '../data/defaultCategories';
 
 interface BudgetContextType {
   transactions: Transaction[];
@@ -26,8 +27,8 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const [categories, setCategories] = useState<Category[]>(() => {
-    const stored = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
-    return stored ? JSON.parse(stored) : [];
+    const savedCategories = localStorage.getItem('categories');
+    return savedCategories ? JSON.parse(savedCategories) : defaultCategories;
   });
 
   const [currentBudget, setCurrentBudget] = useState<MonthlyBudget>(() => {
