@@ -112,18 +112,17 @@ export const TransactionForm = () => {
           <span>Transaction récurrente</span>
         </label>
 
-        {formData.isRecurring && (
-          <input
-            type="number"
-            min="1"
-            max="31"
-            value={formData.recurringDay}
-            onChange={e => setFormData(prev => ({ ...prev, recurringDay: e.target.value }))}
-            required
-            placeholder="Jour du mois"
-            className={styles.dayInput}
-          />
-        )}
+        <input
+          type="number"
+          min="1"
+          max="31"
+          value={formData.recurringDay}
+          onChange={e => setFormData(prev => ({ ...prev, recurringDay: e.target.value }))}
+          disabled={!formData.isRecurring}
+          required={formData.isRecurring}
+          placeholder="Jour du mois"
+          className={styles.dayInput}
+        />
       </div>
 
       <button type="submit" className={styles.submitButton}>

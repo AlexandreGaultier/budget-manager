@@ -14,6 +14,7 @@ export interface Category {
   name: string;
   type: 'income' | 'expense';
   isDefault: boolean;
+  icon: string;
 }
 
 export interface MonthlyBudget {
