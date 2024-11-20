@@ -31,7 +31,7 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     return savedCategories ? JSON.parse(savedCategories) : defaultCategories;
   });
 
-  const [currentBudget, setCurrentBudget] = useState<MonthlyBudget>(() => {
+  const [currentBudget] = useState<MonthlyBudget>(() => {
     const stored = localStorage.getItem(STORAGE_KEYS.CURRENT_BUDGET);
     return stored ? JSON.parse(stored) : {
       month: new Date().getMonth(),
