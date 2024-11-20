@@ -1,15 +1,37 @@
 .form {
-  background-color: var(--surface-color);
+  background-color: #3d3d3d;
   border-radius: 12px;
   padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.title {
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.descriptionInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
 }
 
 .amountInput {
   position: relative;
   width: 100%;
+  margin-bottom: 1.5rem;
 }
 
 .amountInput input {
@@ -33,43 +55,40 @@
 }
 
 .typeButtons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .typeButton {
+  flex: 1;
   padding: 0.75rem;
-  border: none;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  opacity: 0.6;
-}
-
-.typeButton.active {
-  opacity: 1;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border: 2px solid;
 }
 
 .expenseButton {
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+.expenseButton:hover, .expenseButton.active {
   background-color: var(--error-color);
   color: white;
 }
 
 .incomeButton {
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.incomeButton:hover, .incomeButton.active {
   background-color: var(--success-color);
   color: white;
-}
-
-.expenseButton.active {
-  background-color: var(--error-color);
-}
-
-.incomeButton.active {
-  background-color: var(--success-color);
 }
 
 .categoriesSection {
@@ -102,12 +121,16 @@
 .categoryButton:hover {
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 6px -1px rgba(109, 40, 217, 0.2);
 }
 
 .categoryButton.active {
   background: var(--primary-color);
   border-color: var(--primary-color);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(109, 40, 217, 0.2);
 }
 
 .categoryIcon {
@@ -126,15 +149,6 @@
   font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 0.5rem;
-}
-
-.descriptionInput {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-primary);
 }
 
 .recurringGroup {
@@ -206,17 +220,29 @@
 .submitButton {
   width: 100%;
   padding: 1rem;
-  background-color: var(--primary-color);
+  margin-top: 1.5rem;
+  background-color: transparent;
+  border: solid 2px var(--primary-color);
   color: white;
-  border: none;
   border-radius: 8px;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .submitButton:hover {
-  background-color: var(--primary-hover-color);
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(109, 40, 217, 0.2);
+}
+
+.submitButton:active {
+  transform: translateY(0);
 }
 
 /* Focus states */
@@ -224,4 +250,9 @@ input:focus, button:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(109, 40, 217, 0.2);
+}
+
+/* Ajout d'une variable pour la couleur primaire plus foncée */
+:root {
+  --primary-color-dark: #5b21b6;
 } 

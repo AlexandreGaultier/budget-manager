@@ -4,6 +4,7 @@ export const theme = {
     surface: '#25262b',
     primary: '#6d28d9',
     primaryHover: '#7c3aed',
+    primaryLight: '#d1fae5',
     success: '#10b981',
     successLight: '#d1fae5',
     error: '#ef4444',

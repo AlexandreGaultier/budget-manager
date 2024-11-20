@@ -1,3 +1,27 @@
+:root {
+  /* Couleurs principales */
+  --background-color: #1a1b1e;
+  --surface-color: #25262b;
+  --primary-color: #2563eb;
+  --primary-hover: #3b82f6;
+  --primary-light: #dbeafe;
+  
+  /* Couleurs de statut */
+  --success-color: #10b981;
+  --success-light: #d1fae5;
+  --error-color: #ef4444;
+  --error-light: #fee2e2;
+  
+  /* Textes */
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  
+  /* Bordures et autres */
+  --border-color: #414447;
+  --border-radius: 8px;
+  --transition: 0.2s ease-in-out;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
