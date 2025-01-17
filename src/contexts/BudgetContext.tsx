@@ -10,6 +10,7 @@ interface BudgetContextType {
   addCategory: (category: Omit<Category, 'id'>) => void;
   deleteTransaction: (id: string) => void;
   deleteCategory: (id: string) => void;
+  updateTransaction: (id: string, updatedData: Partial<Omit<Transaction, 'id'>>) => void;
 }
 
 const BudgetContext = createContext<BudgetContextType | null>(null);
@@ -80,6 +81,14 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     setCategories(prev => prev.filter(c => c.id !== id));
   };
 
+  const updateTransaction = (id: string, updatedData: Partial<Omit<Transaction, 'id'>>) => {
+    setTransactions(prev => prev.map(transaction => 
+      transaction.id === id 
+        ? { ...transaction, ...updatedData }
+        : transaction
+    ));
+  };
+
   return (
     <BudgetContext.Provider
       value={{
@@ -89,7 +98,8 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
         addTransaction,
         addCategory,
         deleteTransaction,
-        deleteCategory
+        deleteCategory,
+        updateTransaction
       }}
     >
       {children}
