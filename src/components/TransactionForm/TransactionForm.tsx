@@ -35,6 +35,9 @@ export const TransactionForm = () => {
     e.stopPropagation();
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) {
       deleteCategory(id);
+      if (displayedCategories.length === 1 && currentPage > 0) {
+        setCurrentPage(prev => prev - 1);
+      }
       if (formData.category === id) {
         setFormData(prev => ({ ...prev, category: '' }));
       }
@@ -163,7 +166,7 @@ export const TransactionForm = () => {
             ))}
           </div>
 
-          {totalPages > 1 && (
+          {currentCategories.length > 0 && (
             <div className={styles.pagination}>
               <button
                 type="button"
@@ -173,11 +176,13 @@ export const TransactionForm = () => {
               >
                 ←
               </button>
-              <span>{currentPage + 1} / {totalPages}</span>
+              <span>
+                {currentPage + 1} / {Math.max(1, totalPages)}
+              </span>
               <button
                 type="button"
                 onClick={() => setCurrentPage(prev => prev + 1)}
-                disabled={currentPage === totalPages - 1}
+                disabled={currentPage === Math.max(0, totalPages - 1)}
                 className={styles.paginationButton}
               >
                 →
