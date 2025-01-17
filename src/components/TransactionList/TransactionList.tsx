@@ -54,6 +54,10 @@ export const TransactionList = () => {
     setEditingTransaction(transaction);
   };
 
+  const filteredTotal = filteredTransactions.reduce((total, transaction) => {
+    return total + (transaction.type === 'income' ? transaction.amount : -transaction.amount);
+  }, 0);
+
   if (filteredTransactions.length === 0) {
     return (
       <div className={styles.container}>
@@ -97,23 +101,28 @@ export const TransactionList = () => {
           </button>
         </div>
 
-        <div className={styles.filtersScroll}>
-          <button
-            className={`${styles.filterChip} ${!selectedCategory ? styles.active : ''}`}
-            onClick={() => setSelectedCategory(null)}
-          >
-            Toutes les catégories
-          </button>
-          {uniqueCategories.map(category => (
+        <div className={styles.filterHeader}>
+          <div className={styles.filtersScroll}>
             <button
-              key={category.id}
-              className={`${styles.filterChip} ${selectedCategory === category.id ? styles.active : ''}`}
-              onClick={() => setSelectedCategory(category.id)}
+              className={`${styles.filterChip} ${!selectedCategory ? styles.active : ''}`}
+              onClick={() => setSelectedCategory(null)}
             >
-              <span className={styles.filterIcon}>{category.icon}</span>
-              {category.name}
+              Toutes les catégories
             </button>
-          ))}
+            {uniqueCategories.map(category => (
+              <button
+                key={category.id}
+                className={`${styles.filterChip} ${selectedCategory === category.id ? styles.active : ''}`}
+                onClick={() => setSelectedCategory(category.id)}
+              >
+                <span className={styles.filterIcon}>{category.icon}</span>
+                {category.name}
+              </button>
+            ))}
+          </div>
+          <div className={`${styles.filterTotal} ${filteredTotal >= 0 ? styles.positive : styles.negative}`}>
+            Total: {formatCurrency(filteredTotal)}
+          </div>
         </div>
       </div>
 

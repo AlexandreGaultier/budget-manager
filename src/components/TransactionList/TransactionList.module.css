@@ -254,6 +254,7 @@
 }
 
 .filtersScroll {
+  flex: 1;
   display: flex;
   gap: 0.5rem;
   overflow-x: auto;
@@ -293,4 +294,28 @@
 
 .filterIcon {
   font-size: 1.25rem;
+}
+
+.filterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filterTotal {
+  font-weight: 600;
+  font-size: 1.125rem;
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.positive {
+  color: var(--success-color);
+}
+
+.negative {
+  color: var(--error-color);
 } 
