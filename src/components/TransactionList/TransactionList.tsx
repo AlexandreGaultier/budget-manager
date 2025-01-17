@@ -8,10 +8,29 @@ import { EditTransactionModal } from '../EditTransactionModal/EditTransactionMod
 export const TransactionList = () => {
   const { transactions, deleteTransaction, categories } = useBudget();
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense'>('all');
 
-  const sortedTransactions = [...transactions].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  const filteredTransactions = [...transactions]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .filter(transaction => {
+      if (selectedType !== 'all' && transaction.type !== selectedType) return false;
+      if (selectedCategory && transaction.category !== selectedCategory) return false;
+      return true;
+    });
+
+  const uniqueCategories = Array.from(new Set(
+    transactions
+      .filter(t => selectedType === 'all' || t.type === selectedType)
+      .map(t => t.category)
+  )).map(categoryId => {
+    const category = categories.find(cat => cat.id === categoryId);
+    return {
+      id: categoryId,
+      name: category?.name || 'Non catégorisé',
+      icon: category?.icon || '📋'
+    };
+  });
 
   const getCategoryInfo = (categoryId: string) => {
     const category = categories.find(cat => cat.id === categoryId);
@@ -35,7 +54,7 @@ export const TransactionList = () => {
     setEditingTransaction(transaction);
   };
 
-  if (sortedTransactions.length === 0) {
+  if (filteredTransactions.length === 0) {
     return (
       <div className={styles.container}>
         <h2>Transactions récentes</h2>
@@ -49,8 +68,57 @@ export const TransactionList = () => {
   return (
     <div className={styles.container}>
       <h2>Transactions récentes</h2>
+      
+      <div className={styles.filtersContainer}>
+        <div className={styles.typeFilters}>
+          <button
+            className={`${styles.typeButton} ${selectedType === 'all' ? styles.active : ''}`}
+            onClick={() => setSelectedType('all')}
+          >
+            Tout
+          </button>
+          <button
+            className={`${styles.typeButton} ${styles.incomeButton} ${selectedType === 'income' ? styles.active : ''}`}
+            onClick={() => {
+              setSelectedType('income');
+              setSelectedCategory(null);
+            }}
+          >
+            Revenus
+          </button>
+          <button
+            className={`${styles.typeButton} ${styles.expenseButton} ${selectedType === 'expense' ? styles.active : ''}`}
+            onClick={() => {
+              setSelectedType('expense');
+              setSelectedCategory(null);
+            }}
+          >
+            Dépenses
+          </button>
+        </div>
+
+        <div className={styles.filtersScroll}>
+          <button
+            className={`${styles.filterChip} ${!selectedCategory ? styles.active : ''}`}
+            onClick={() => setSelectedCategory(null)}
+          >
+            Toutes les catégories
+          </button>
+          {uniqueCategories.map(category => (
+            <button
+              key={category.id}
+              className={`${styles.filterChip} ${selectedCategory === category.id ? styles.active : ''}`}
+              onClick={() => setSelectedCategory(category.id)}
+            >
+              <span className={styles.filterIcon}>{category.icon}</span>
+              {category.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className={styles.list}>
-        {sortedTransactions.map(transaction => {
+        {filteredTransactions.map(transaction => {
           const category = getCategoryInfo(transaction.category);
           return (
             <div 
