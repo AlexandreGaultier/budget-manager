@@ -28,7 +28,7 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const [categories, setCategories] = useState<Category[]>(() => {
-    const savedCategories = localStorage.getItem('categories');
+    const savedCategories = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
     return savedCategories ? JSON.parse(savedCategories) : defaultCategories;
   });
 
@@ -70,7 +70,9 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
       ...category,
       id: crypto.randomUUID()
     };
-    setCategories(prev => [...prev, newCategory]);
+    const updatedCategories = [...categories, newCategory];
+    setCategories(updatedCategories);
+    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(updatedCategories));
   };
 
   const deleteTransaction = (id: string) => {
@@ -78,7 +80,16 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deleteCategory = (id: string) => {
-    setCategories(prev => prev.filter(c => c.id !== id));
+    const categoryToDelete = categories.find(cat => cat.id === id);
+    
+    if (categoryToDelete?.isDefault) {
+      alert("Les catégories par défaut ne peuvent pas être supprimées.");
+      return;
+    }
+
+    const updatedCategories = categories.filter(c => c.id !== id);
+    setCategories(updatedCategories);
+    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(updatedCategories));
   };
 
   const updateTransaction = (id: string, updatedData: Partial<Omit<Transaction, 'id'>>) => {

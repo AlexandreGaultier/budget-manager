@@ -104,6 +104,7 @@
 }
 
 .categoryButton {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -129,8 +130,90 @@
   background: var(--primary-color);
   border-color: var(--primary-color);
   color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(109, 40, 217, 0.2);
+}
+
+.deleteCategoryButton {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: transparent;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 1;
+  padding: 0;
+}
+
+.categoryButton:hover .deleteCategoryButton {
+  opacity: 1;
+}
+
+.deleteCategoryButton:hover {
+  background-color: var(--error-color);
+  transform: scale(1.1);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.paginationButton {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.paginationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paginationButton:not(:disabled):hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.categoryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.addCategoryButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addCategoryButton:hover {
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .categoryIcon {
