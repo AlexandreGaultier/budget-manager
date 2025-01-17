@@ -1,5 +1,6 @@
 .container {
   background-color: var(--surface-color);
+  max-width: 700px;
   border-radius: 12px;
   padding: 1.5rem;
 }
@@ -181,4 +182,136 @@
 .editButton:hover {
   color: var(--primary-color);
   background-color: rgba(37, 99, 235, 0.1);
+}
+
+.filtersContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  max-width: 100%;
+}
+
+.typeFilters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.typeButton {
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.typeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.typeButton.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.incomeButton {
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.incomeButton.active {
+  background: var(--success-color);
+  border-color: var(--success-color);
+  color: white;
+}
+
+.expenseButton {
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+.expenseButton.active {
+  background: var(--error-color);
+  border-color: var(--error-color);
+  color: white;
+}
+
+.filtersScroll {
+  flex: 1;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min-content;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.25rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.filtersScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.filterChip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 50px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filterChip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.filterChip.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.filterIcon {
+  font-size: 1.25rem;
+}
+
+.filterHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filterTotal {
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+}
+
+.positive {
+  color: var(--success-color);
+}
+
+.negative {
+  color: var(--error-color);
 } 
