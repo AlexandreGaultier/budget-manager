@@ -144,25 +144,41 @@ export const TransactionForm = () => {
 
           <div className={styles.categoryGrid}>
             {displayedCategories.map(cat => (
-              <button
+              <div
                 key={cat.id}
-                type="button"
                 className={`${styles.categoryButton} ${formData.category === cat.id ? styles.active : ''}`}
                 onClick={() => setFormData(prev => ({ ...prev, category: cat.id }))}
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setFormData(prev => ({ ...prev, category: cat.id }));
+                  }
+                }}
               >
                 <span className={styles.categoryIcon}>{cat.icon}</span>
                 <span className={styles.categoryName}>{cat.name}</span>
                 {!cat.isDefault && (
-                  <button
-                    type="button"
+                  <div
+                    role="button"
+                    tabIndex={0}
                     className={styles.deleteCategoryButton}
-                    onClick={(e) => handleDeleteCategory(cat.id, e)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteCategory(cat.id, e);
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.stopPropagation();
+                        handleDeleteCategory(cat.id, e as any);
+                      }
+                    }}
                     title="Supprimer la catégorie"
                   >
                     🗑️
-                  </button>
+                  </div>
                 )}
-              </button>
+              </div>
             ))}
           </div>
 
