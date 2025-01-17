@@ -255,4 +255,25 @@ input:focus, button:focus {
 /* Ajout d'une variable pour la couleur primaire plus foncée */
 :root {
   --primary-color-dark: #5b21b6;
+}
+
+.dateInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.dateInput:hover {
+  border-color: var(--primary-color);
+}
+
+.dateInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(109, 40, 217, 0.2);
 } 

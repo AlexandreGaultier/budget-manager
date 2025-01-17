@@ -10,7 +10,8 @@ export const TransactionForm = () => {
     category: '',
     description: '',
     isRecurring: false,
-    recurringDay: ''
+    recurringDay: '',
+    date: new Date()
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,7 +22,7 @@ export const TransactionForm = () => {
       type: formData.type,
       category: formData.category,
       description: formData.description,
-      date: new Date(),
+      date: formData.date,
       isRecurring: formData.isRecurring,
       recurringDay: formData.isRecurring ? Number(formData.recurringDay) : undefined
     };
@@ -34,7 +35,8 @@ export const TransactionForm = () => {
       category: '',
       description: '',
       isRecurring: false,
-      recurringDay: ''
+      recurringDay: '',
+      date: new Date()
     });
   };
 
@@ -44,7 +46,7 @@ export const TransactionForm = () => {
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
       <h3 className={styles.title}>Nouvelle transaction</h3>
-      
+
       <div className={styles.formGroup}>
         <input
           type="text"
@@ -54,6 +56,19 @@ export const TransactionForm = () => {
           placeholder="Salaire, cadeau, etc."
           maxLength={25}
           className={styles.descriptionInput}
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <input
+          type="date"
+          value={formData.date.toISOString().split('T')[0]}
+          onChange={e => setFormData(prev => ({ 
+            ...prev, 
+            date: new Date(e.target.value) 
+          }))}
+          required
+          className={styles.dateInput}
         />
       </div>
 
