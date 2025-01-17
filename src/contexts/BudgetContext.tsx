@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { Transaction, Category, MonthlyBudget } from '../types';
 import { defaultCategories } from '../data/defaultCategories';
 
@@ -11,6 +11,11 @@ interface BudgetContextType {
   deleteTransaction: (id: string) => void;
   deleteCategory: (id: string) => void;
   updateTransaction: (id: string, updatedData: Partial<Omit<Transaction, 'id'>>) => void;
+  selectedDate: Date;
+  goToPreviousMonth: () => void;
+  goToNextMonth: () => void;
+  selectMonth: (date: Date) => void;
+  getMonthTransactions: (date: Date) => Transaction[];
 }
 
 const BudgetContext = createContext<BudgetContextType | null>(null);
@@ -43,6 +48,11 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
       actualIncome: 0,
       actualExpenses: 0
     };
+  });
+
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
   });
 
   useEffect(() => {
@@ -100,6 +110,28 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     ));
   };
 
+  const getMonthTransactions = useCallback((date: Date) => {
+    const start = new Date(date.getFullYear(), date.getMonth(), 1);
+    const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    
+    return transactions.filter(transaction => {
+      const transactionDate = new Date(transaction.date);
+      return transactionDate >= start && transactionDate <= end;
+    });
+  }, [transactions]);
+
+  const goToPreviousMonth = () => {
+    setSelectedDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  };
+
+  const goToNextMonth = () => {
+    setSelectedDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  };
+
+  const selectMonth = (date: Date) => {
+    setSelectedDate(new Date(date.getFullYear(), date.getMonth(), 1));
+  };
+
   return (
     <BudgetContext.Provider
       value={{
@@ -110,7 +142,12 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
         addCategory,
         deleteTransaction,
         deleteCategory,
-        updateTransaction
+        updateTransaction,
+        selectedDate,
+        goToPreviousMonth,
+        goToNextMonth,
+        selectMonth,
+        getMonthTransactions,
       }}
     >
       {children}

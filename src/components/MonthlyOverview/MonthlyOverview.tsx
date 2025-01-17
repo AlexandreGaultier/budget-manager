@@ -1,21 +1,18 @@
 import { useBudget } from '../../contexts/BudgetContext';
 import { formatCurrency } from '../../utils/formatters';
 import styles from './MonthlyOverview.module.css';
+import { MonthSelector } from '../MonthSelector/MonthSelector';
 
 export const MonthlyOverview = () => {
-  const { currentBudget, transactions } = useBudget();
+  const { selectedDate, getMonthTransactions } = useBudget();
   
-  const currentMonthTransactions = transactions.filter(transaction => {
-    const transactionDate = new Date(transaction.date);
-    return transactionDate.getMonth() === currentBudget.month && 
-           transactionDate.getFullYear() === currentBudget.year;
-  });
+  const monthTransactions = getMonthTransactions(selectedDate);
 
-  const totalIncome = currentMonthTransactions
+  const totalIncome = monthTransactions
     .filter(t => t.type === 'income')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const totalExpenses = currentMonthTransactions
+  const totalExpenses = monthTransactions
     .filter(t => t.type === 'expense')
     .reduce((sum, t) => sum + t.amount, 0);
 
@@ -23,7 +20,7 @@ export const MonthlyOverview = () => {
 
   return (
     <div className={styles.overview}>
-      <h2>Aperçu du mois</h2>
+      <MonthSelector />
       <div className={styles.stats}>
         <div className={styles.stat}>
           <h3>Revenus</h3>

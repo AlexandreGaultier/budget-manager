@@ -6,21 +6,29 @@ import { useState } from 'react';
 import { EditTransactionModal } from '../EditTransactionModal/EditTransactionModal';
 
 export const TransactionList = () => {
-  const { transactions, deleteTransaction, categories } = useBudget();
+  const { 
+    deleteTransaction, 
+    categories, 
+    selectedDate,
+    getMonthTransactions 
+  } = useBudget();
+  
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense'>('all');
 
-  const filteredTransactions = [...transactions]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  const monthTransactions = getMonthTransactions(selectedDate);
+  
+  const filteredTransactions = monthTransactions
     .filter(transaction => {
       if (selectedType !== 'all' && transaction.type !== selectedType) return false;
       if (selectedCategory && transaction.category !== selectedCategory) return false;
       return true;
-    });
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const uniqueCategories = Array.from(new Set(
-    transactions
+    monthTransactions
       .filter(t => selectedType === 'all' || t.type === selectedType)
       .map(t => t.category)
   )).map(categoryId => {
