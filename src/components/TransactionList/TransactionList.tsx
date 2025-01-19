@@ -157,7 +157,10 @@ export const TransactionList = () => {
                   </div>
                   {transaction.isRecurring && (
                     <div className={styles.recurringBadge}>
-                      Récurrent {transaction.frequency}
+                      Récurrent {transaction.frequency === 'daily' ? 'tous les jours ' : 
+                                 transaction.frequency === 'weekly' ? 'toutes les semaines ' : 
+                                 transaction.frequency === 'monthly' ? 'tous les mois ' : ''} 
+                      du {formatDate(transaction.startDate || new Date()) + ' au ' + formatDate(transaction.endDate || new Date())}
                     </div>
                   )}
                 </div>

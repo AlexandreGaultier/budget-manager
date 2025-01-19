@@ -82,6 +82,24 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     const endDate = new Date(transactionData.endDate!);
     let currentDate = new Date(startDate);
 
+    newTransactions.push({
+      ...transactionData,
+      id: crypto.randomUUID(),
+      date: new Date(startDate),
+    });
+
+    switch (transactionData.frequency) {
+      case 'daily':
+        currentDate.setDate(currentDate.getDate() + 1);
+        break;
+      case 'weekly':
+        currentDate.setDate(currentDate.getDate() + 7);
+        break;
+      case 'monthly':
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        break;
+    }
+
     while (currentDate <= endDate) {
       newTransactions.push({
         ...transactionData,

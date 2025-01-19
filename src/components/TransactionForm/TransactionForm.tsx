@@ -250,7 +250,6 @@ export const TransactionForm = () => {
                       ...prev, 
                       startDate: new Date(e.target.value) 
                     }))}
-                    min={new Date().toISOString().split('T')[0]}
                     className={styles.dateInput}
                   />
                 </div>
