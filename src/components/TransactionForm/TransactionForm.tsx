@@ -95,17 +95,82 @@ export const TransactionForm = () => {
           />
         </div>
 
-        <div className={styles.formGroup}>
-          <input
-            type="date"
-            value={formData.date.toISOString().split('T')[0]}
-            onChange={e => setFormData(prev => ({ 
-              ...prev, 
-              date: new Date(e.target.value) 
-            }))}
-            required
-            className={styles.dateInput}
-          />
+        <div className={styles.dateSection}>
+          <div className={styles.dateTypeToggle}>
+            <button
+              type="button"
+              className={`${styles.dateTypeButton} ${!formData.isRecurring ? styles.active : ''}`}
+              onClick={() => setFormData(prev => ({ ...prev, isRecurring: false }))}
+            >
+              Date unique
+            </button>
+            <button
+              type="button"
+              className={`${styles.dateTypeButton} ${formData.isRecurring ? styles.active : ''}`}
+              onClick={() => setFormData(prev => ({ ...prev, isRecurring: true }))}
+            >
+              Récurrent
+            </button>
+          </div>
+
+          {!formData.isRecurring ? (
+            <div className={styles.singleDateGroup}>
+              <label>Date de la transaction</label>
+              <input
+                type="date"
+                value={formData.date.toISOString().split('T')[0]}
+                onChange={e => setFormData(prev => ({ 
+                  ...prev, 
+                  date: new Date(e.target.value) 
+                }))}
+                className={styles.dateInput}
+              />
+            </div>
+          ) : (
+            <div className={styles.recurrenceDetails}>
+              <select
+                value={formData.frequency}
+                onChange={e => setFormData(prev => ({ 
+                  ...prev, 
+                  frequency: e.target.value as 'daily' | 'weekly' | 'monthly' 
+                }))}
+                className={styles.frequencySelect}
+              >
+                <option value="daily">Tous les jours</option>
+                <option value="weekly">Toutes les semaines</option>
+                <option value="monthly">Tous les mois</option>
+              </select>
+
+              <div className={styles.dateInputs}>
+                <div className={styles.dateGroup}>
+                  <label>Date de début</label>
+                  <input
+                    type="date"
+                    value={formData.startDate.toISOString().split('T')[0]}
+                    onChange={e => setFormData(prev => ({ 
+                      ...prev, 
+                      startDate: new Date(e.target.value) 
+                    }))}
+                    className={styles.dateInput}
+                  />
+                </div>
+
+                <div className={styles.dateGroup}>
+                  <label>Date de fin</label>
+                  <input
+                    type="date"
+                    value={formData.endDate.toISOString().split('T')[0]}
+                    onChange={e => setFormData(prev => ({ 
+                      ...prev, 
+                      endDate: new Date(e.target.value) 
+                    }))}
+                    min={formData.startDate.toISOString().split('T')[0]}
+                    className={styles.dateInput}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.amountInput}>
@@ -211,63 +276,6 @@ export const TransactionForm = () => {
               >
                 →
               </button>
-            </div>
-          )}
-        </div>
-
-        <div className={styles.recurringGroup}>
-          <label className={styles.recurringLabel}>
-            <input
-              type="checkbox"
-              checked={formData.isRecurring}
-              onChange={e => setFormData(prev => ({ ...prev, isRecurring: e.target.checked }))}
-            />
-            <span>Transaction récurrente</span>
-          </label>
-
-          {formData.isRecurring && (
-            <div className={styles.recurrenceDetails}>
-              <select
-                value={formData.frequency}
-                onChange={e => setFormData(prev => ({ 
-                  ...prev, 
-                  frequency: e.target.value as 'daily' | 'weekly' | 'monthly' 
-                }))}
-                className={styles.frequencySelect}
-              >
-                <option value="daily">Tous les jours</option>
-                <option value="weekly">Toutes les semaines</option>
-                <option value="monthly">Tous les mois</option>
-              </select>
-
-              <div className={styles.dateInputs}>
-                <div className={styles.dateGroup}>
-                  <label>Date de début</label>
-                  <input
-                    type="date"
-                    value={formData.startDate.toISOString().split('T')[0]}
-                    onChange={e => setFormData(prev => ({ 
-                      ...prev, 
-                      startDate: new Date(e.target.value) 
-                    }))}
-                    className={styles.dateInput}
-                  />
-                </div>
-
-                <div className={styles.dateGroup}>
-                  <label>Date de fin</label>
-                  <input
-                    type="date"
-                    value={formData.endDate.toISOString().split('T')[0]}
-                    onChange={e => setFormData(prev => ({ 
-                      ...prev, 
-                      endDate: new Date(e.target.value) 
-                    }))}
-                    min={formData.startDate.toISOString().split('T')[0]}
-                    className={styles.dateInput}
-                  />
-                </div>
-              </div>
             </div>
           )}
         </div>
