@@ -18,6 +18,7 @@ interface BudgetContextType {
   deleteTransaction: (id: string) => void;
   deleteCategory: (id: string) => void;
   updateTransaction: (id: string, updatedData: Partial<Omit<Transaction, 'id'>>) => void;
+  deleteRecurringTransactions: (transaction: Transaction) => void;
 }
 
 const BudgetContext = createContext<BudgetContextType | null>(null);
@@ -67,12 +68,60 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(STORAGE_KEYS.CURRENT_BUDGET, JSON.stringify(currentBudget));
   }, [currentBudget]);
 
-  const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
-    const newTransaction = {
-      ...transaction,
-      id: crypto.randomUUID()
-    };
-    setTransactions(prev => [...prev, newTransaction]);
+  const addTransaction = (transactionData: Omit<Transaction, 'id'>) => {
+    if (!transactionData.isRecurring) {
+      const newTransaction = {
+        ...transactionData,
+        id: crypto.randomUUID()
+      };
+      setTransactions(prev => [...prev, newTransaction]);
+      return;
+    }
+
+    const newTransactions: Transaction[] = [];
+    const startDate = new Date(transactionData.startDate!);
+    const endDate = new Date(transactionData.endDate!);
+    let currentDate = new Date(startDate);
+
+    newTransactions.push({
+      ...transactionData,
+      id: crypto.randomUUID(),
+      date: new Date(startDate),
+    });
+
+    switch (transactionData.frequency) {
+      case 'daily':
+        currentDate.setDate(currentDate.getDate() + 1);
+        break;
+      case 'weekly':
+        currentDate.setDate(currentDate.getDate() + 7);
+        break;
+      case 'monthly':
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        break;
+    }
+
+    while (currentDate <= endDate) {
+      newTransactions.push({
+        ...transactionData,
+        id: crypto.randomUUID(),
+        date: new Date(currentDate),
+      });
+
+      switch (transactionData.frequency) {
+        case 'daily':
+          currentDate.setDate(currentDate.getDate() + 1);
+          break;
+        case 'weekly':
+          currentDate.setDate(currentDate.getDate() + 7);
+          break;
+        case 'monthly':
+          currentDate.setMonth(currentDate.getMonth() + 1);
+          break;
+      }
+    }
+
+    setTransactions(prev => [...prev, ...newTransactions]);
   };
 
   const addCategory = (category: Omit<Category, 'id'>) => {
@@ -87,6 +136,15 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteTransaction = (id: string) => {
     setTransactions(prev => prev.filter(t => t.id !== id));
+  };
+
+  const deleteRecurringTransactions = (transaction: Transaction) => {
+    setTransactions(prev => prev.filter(t => 
+      !(t.description === transaction.description &&
+        t.isRecurring &&
+        t.startDate?.toString() === transaction.startDate?.toString() &&
+        t.endDate?.toString() === transaction.endDate?.toString())
+    ));
   };
 
   const deleteCategory = (id: string) => {
@@ -159,6 +217,7 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
         addTransaction,
         addCategory,
         deleteTransaction,
+        deleteRecurringTransactions,
         deleteCategory,
         updateTransaction,
         selectedDate,
