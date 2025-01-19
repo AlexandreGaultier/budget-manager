@@ -10,6 +10,14 @@ interface BudgetContextType {
   goToNextPeriod: () => void;
   selectDate: (date: Date) => void;
   getTransactions: () => Transaction[];
+  transactions: Transaction[];
+  categories: Category[];
+  currentBudget: MonthlyBudget;
+  addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
+  addCategory: (category: Omit<Category, 'id'>) => void;
+  deleteTransaction: (id: string) => void;
+  deleteCategory: (id: string) => void;
+  updateTransaction: (id: string, updatedData: Partial<Omit<Transaction, 'id'>>) => void;
 }
 
 const BudgetContext = createContext<BudgetContextType | null>(null);
