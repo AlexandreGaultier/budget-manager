@@ -157,7 +157,7 @@ export const TransactionList = () => {
                   </div>
                   {transaction.isRecurring && (
                     <div className={styles.recurringBadge}>
-                      Récurrent (Jour {transaction.recurringDay})
+                      Récurrent {transaction.frequency}
                     </div>
                   )}
                 </div>

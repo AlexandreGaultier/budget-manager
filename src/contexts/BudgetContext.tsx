@@ -67,12 +67,42 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(STORAGE_KEYS.CURRENT_BUDGET, JSON.stringify(currentBudget));
   }, [currentBudget]);
 
-  const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
-    const newTransaction = {
-      ...transaction,
-      id: crypto.randomUUID()
-    };
-    setTransactions(prev => [...prev, newTransaction]);
+  const addTransaction = (transactionData: Omit<Transaction, 'id'>) => {
+    if (!transactionData.isRecurring) {
+      const newTransaction = {
+        ...transactionData,
+        id: crypto.randomUUID()
+      };
+      setTransactions(prev => [...prev, newTransaction]);
+      return;
+    }
+
+    const newTransactions: Transaction[] = [];
+    const startDate = new Date(transactionData.startDate!);
+    const endDate = new Date(transactionData.endDate!);
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= endDate) {
+      newTransactions.push({
+        ...transactionData,
+        id: crypto.randomUUID(),
+        date: new Date(currentDate),
+      });
+
+      switch (transactionData.frequency) {
+        case 'daily':
+          currentDate.setDate(currentDate.getDate() + 1);
+          break;
+        case 'weekly':
+          currentDate.setDate(currentDate.getDate() + 7);
+          break;
+        case 'monthly':
+          currentDate.setMonth(currentDate.getMonth() + 1);
+          break;
+      }
+    }
+
+    setTransactions(prev => [...prev, ...newTransactions]);
   };
 
   const addCategory = (category: Omit<Category, 'id'>) => {

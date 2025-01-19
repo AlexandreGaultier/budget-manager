@@ -14,9 +14,11 @@ export const TransactionForm = () => {
     type: 'expense' as 'income' | 'expense',
     category: '',
     description: '',
+    date: new Date(),
     isRecurring: false,
-    recurringDay: '',
-    date: new Date()
+    frequency: 'monthly' as 'daily' | 'weekly' | 'monthly',
+    startDate: new Date(),
+    endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)) // Par défaut : 1 mois plus tard
   });
 
   const ITEMS_PER_PAGE = 9;
@@ -54,7 +56,11 @@ export const TransactionForm = () => {
       description: formData.description,
       date: formData.date,
       isRecurring: formData.isRecurring,
-      recurringDay: formData.isRecurring ? Number(formData.recurringDay) : undefined
+      ...(formData.isRecurring && {
+        frequency: formData.frequency,
+        startDate: formData.startDate,
+        endDate: formData.endDate
+      })
     };
 
     addTransaction(transaction);
@@ -64,9 +70,11 @@ export const TransactionForm = () => {
       type: 'expense',
       category: '',
       description: '',
+      date: new Date(),
       isRecurring: false,
-      recurringDay: '',
-      date: new Date()
+      frequency: 'monthly',
+      startDate: new Date(),
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1))
     });
   };
 
@@ -217,17 +225,52 @@ export const TransactionForm = () => {
             <span>Transaction récurrente</span>
           </label>
 
-          <input
-            type="number"
-            min="1"
-            max="31"
-            value={formData.recurringDay}
-            onChange={e => setFormData(prev => ({ ...prev, recurringDay: e.target.value }))}
-            disabled={!formData.isRecurring}
-            required={formData.isRecurring}
-            placeholder="Jour du mois"
-            className={styles.dayInput}
-          />
+          {formData.isRecurring && (
+            <div className={styles.recurrenceDetails}>
+              <select
+                value={formData.frequency}
+                onChange={e => setFormData(prev => ({ 
+                  ...prev, 
+                  frequency: e.target.value as 'daily' | 'weekly' | 'monthly' 
+                }))}
+                className={styles.frequencySelect}
+              >
+                <option value="daily">Tous les jours</option>
+                <option value="weekly">Toutes les semaines</option>
+                <option value="monthly">Tous les mois</option>
+              </select>
+
+              <div className={styles.dateInputs}>
+                <div className={styles.dateGroup}>
+                  <label>Date de début</label>
+                  <input
+                    type="date"
+                    value={formData.startDate.toISOString().split('T')[0]}
+                    onChange={e => setFormData(prev => ({ 
+                      ...prev, 
+                      startDate: new Date(e.target.value) 
+                    }))}
+                    min={new Date().toISOString().split('T')[0]}
+                    className={styles.dateInput}
+                  />
+                </div>
+
+                <div className={styles.dateGroup}>
+                  <label>Date de fin</label>
+                  <input
+                    type="date"
+                    value={formData.endDate.toISOString().split('T')[0]}
+                    onChange={e => setFormData(prev => ({ 
+                      ...prev, 
+                      endDate: new Date(e.target.value) 
+                    }))}
+                    min={formData.startDate.toISOString().split('T')[0]}
+                    className={styles.dateInput}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <button type="submit" className={styles.submitButton}>
