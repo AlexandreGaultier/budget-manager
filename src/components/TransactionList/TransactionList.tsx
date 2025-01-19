@@ -6,21 +6,29 @@ import { useState } from 'react';
 import { EditTransactionModal } from '../EditTransactionModal/EditTransactionModal';
 
 export const TransactionList = () => {
-  const { transactions, deleteTransaction, categories } = useBudget();
+  const { 
+    deleteTransaction, 
+    categories,
+    getTransactions,
+    viewMode
+  } = useBudget();
+  
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense'>('all');
 
-  const filteredTransactions = [...transactions]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  const currentTransactions = getTransactions();
+
+  const filteredTransactions = currentTransactions
     .filter(transaction => {
       if (selectedType !== 'all' && transaction.type !== selectedType) return false;
       if (selectedCategory && transaction.category !== selectedCategory) return false;
       return true;
-    });
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const uniqueCategories = Array.from(new Set(
-    transactions
+    currentTransactions
       .filter(t => selectedType === 'all' || t.type === selectedType)
       .map(t => t.category)
   )).map(categoryId => {
@@ -61,7 +69,7 @@ export const TransactionList = () => {
   if (filteredTransactions.length === 0) {
     return (
       <div className={styles.container}>
-        <h2>Transactions récentes</h2>
+        <h2>Transactions {viewMode === 'month' ? 'du mois' : "de l'année"}</h2>
         <div className={styles.emptyState}>
           <p>Aucune transaction pour le moment</p>
         </div>
@@ -71,7 +79,7 @@ export const TransactionList = () => {
 
   return (
     <div className={styles.container}>
-      <h2>Transactions récentes</h2>
+      <h2>Transactions {viewMode === 'month' ? 'du mois' : "de l'année"}</h2>
       
       <div className={styles.filtersContainer}>
         <div className={styles.typeFilters}>
