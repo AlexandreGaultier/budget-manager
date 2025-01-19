@@ -8,6 +8,7 @@ import { EditTransactionModal } from '../EditTransactionModal/EditTransactionMod
 export const TransactionList = () => {
   const { 
     deleteTransaction, 
+    deleteRecurringTransactions,
     categories,
     getTransactions,
     viewMode
@@ -16,6 +17,7 @@ export const TransactionList = () => {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense'>('all');
+  const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null);
 
   const currentTransactions = getTransactions();
 
@@ -49,13 +51,27 @@ export const TransactionList = () => {
   };
 
   const handleDelete = (transaction: Transaction) => {
-    const message = transaction.isRecurring 
-      ? `Êtes-vous sûr de vouloir supprimer cette transaction récurrente "${transaction.description}" ?`
-      : `Êtes-vous sûr de vouloir supprimer la transaction "${transaction.description}" ?`;
-
-    if (window.confirm(message)) {
-      deleteTransaction(transaction.id);
+    if (!transaction.isRecurring) {
+      if (window.confirm(`Êtes-vous sûr de vouloir supprimer la transaction "${transaction.description}" ?`)) {
+        deleteTransaction(transaction.id);
+      }
+      return;
     }
+
+    // Pour les transactions récurrentes, on ouvre la modale
+    setDeletingTransaction(transaction);
+  };
+
+  const handleDeleteChoice = (choice: 'single' | 'all' | 'cancel') => {
+    if (!deletingTransaction) return;
+
+    if (choice === 'single') {
+      deleteTransaction(deletingTransaction.id);
+    } else if (choice === 'all') {
+      deleteRecurringTransactions(deletingTransaction);
+    }
+
+    setDeletingTransaction(null);
   };
 
   const handleEdit = (transaction: Transaction) => {
@@ -231,6 +247,36 @@ export const TransactionList = () => {
           transaction={editingTransaction}
           onClose={() => setEditingTransaction(null)}
         />
+      )}
+
+      {deletingTransaction && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h3>Supprimer la transaction</h3>
+            <p>Que souhaitez-vous faire avec "{deletingTransaction.description}" ?</p>
+            
+            <div className={styles.modalButtons}>
+              <button 
+                onClick={() => handleDeleteChoice('single')}
+                className={styles.modalDeleteButton}
+              >
+                Supprimer uniquement cette transaction
+              </button>
+              <button 
+                onClick={() => handleDeleteChoice('all')}
+                className={`${styles.modalDeleteButton} ${styles.modalDeleteAllButton}`}
+              >
+                Supprimer toutes les occurrences
+              </button>
+              <button 
+                onClick={() => handleDeleteChoice('cancel')}
+                className={styles.modalCancelButton}
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

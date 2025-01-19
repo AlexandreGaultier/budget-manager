@@ -18,6 +18,7 @@ interface BudgetContextType {
   deleteTransaction: (id: string) => void;
   deleteCategory: (id: string) => void;
   updateTransaction: (id: string, updatedData: Partial<Omit<Transaction, 'id'>>) => void;
+  deleteRecurringTransactions: (transaction: Transaction) => void;
 }
 
 const BudgetContext = createContext<BudgetContextType | null>(null);
@@ -137,6 +138,15 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     setTransactions(prev => prev.filter(t => t.id !== id));
   };
 
+  const deleteRecurringTransactions = (transaction: Transaction) => {
+    setTransactions(prev => prev.filter(t => 
+      !(t.description === transaction.description &&
+        t.isRecurring &&
+        t.startDate?.toString() === transaction.startDate?.toString() &&
+        t.endDate?.toString() === transaction.endDate?.toString())
+    ));
+  };
+
   const deleteCategory = (id: string) => {
     const categoryToDelete = categories.find(cat => cat.id === id);
     
@@ -207,6 +217,7 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
         addTransaction,
         addCategory,
         deleteTransaction,
+        deleteRecurringTransactions,
         deleteCategory,
         updateTransaction,
         selectedDate,
