@@ -3,6 +3,13 @@ import { Transaction, Category, MonthlyBudget } from '../types';
 import { defaultCategories } from '../data/defaultCategories';
 
 interface BudgetContextType {
+  selectedDate: Date;
+  viewMode: 'month' | 'year';
+  setViewMode: (mode: 'month' | 'year') => void;
+  goToPreviousPeriod: () => void;
+  goToNextPeriod: () => void;
+  selectDate: (date: Date) => void;
+  getTransactions: () => Transaction[];
   transactions: Transaction[];
   categories: Category[];
   currentBudget: MonthlyBudget;
@@ -44,6 +51,9 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
       actualExpenses: 0
     };
   });
+
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [viewMode, setViewMode] = useState<'month' | 'year'>('month');
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
@@ -100,6 +110,46 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     ));
   };
 
+  const goToPreviousPeriod = () => {
+    setSelectedDate(prevDate => {
+      const newDate = new Date(prevDate);
+      if (viewMode === 'month') {
+        newDate.setMonth(prevDate.getMonth() - 1);
+      } else {
+        newDate.setFullYear(prevDate.getFullYear() - 1);
+      }
+      return newDate;
+    });
+  };
+
+  const goToNextPeriod = () => {
+    setSelectedDate(prevDate => {
+      const newDate = new Date(prevDate);
+      if (viewMode === 'month') {
+        newDate.setMonth(prevDate.getMonth() + 1);
+      } else {
+        newDate.setFullYear(prevDate.getFullYear() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  const selectDate = (date: Date) => {
+    setSelectedDate(date);
+  };
+
+  const getTransactions = () => {
+    return transactions.filter(transaction => {
+      const transactionDate = new Date(transaction.date);
+      if (viewMode === 'month') {
+        return transactionDate.getMonth() === selectedDate.getMonth() && 
+               transactionDate.getFullYear() === selectedDate.getFullYear();
+      } else {
+        return transactionDate.getFullYear() === selectedDate.getFullYear();
+      }
+    });
+  };
+
   return (
     <BudgetContext.Provider
       value={{
@@ -110,7 +160,14 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
         addCategory,
         deleteTransaction,
         deleteCategory,
-        updateTransaction
+        updateTransaction,
+        selectedDate,
+        viewMode,
+        setViewMode,
+        goToPreviousPeriod,
+        goToNextPeriod,
+        selectDate,
+        getTransactions,
       }}
     >
       {children}
