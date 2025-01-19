@@ -87,7 +87,7 @@ export const MonthlyOverview = () => {
         </button>
       </div>
 
-      <h2>Aperçu du mois</h2>
+      <h2>Aperçu</h2>
       <div className={styles.stats}>
         <div className={styles.stat}>
           <h3>Revenus</h3>
