@@ -49,17 +49,24 @@ export const TransactionForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Ajuster les dates pour éviter le décalage
+    const adjustDate = (date: Date) => {
+      const newDate = new Date(date);
+      newDate.setHours(12, 0, 0, 0); // On met l'heure à midi pour éviter les problèmes de timezone
+      return newDate;
+    };
+    
     const transaction = {
       amount: Number(formData.amount),
       type: formData.type,
       category: formData.category,
       description: formData.description,
-      date: formData.date,
+      date: adjustDate(formData.date),
       isRecurring: formData.isRecurring,
       ...(formData.isRecurring && {
         frequency: formData.frequency,
-        startDate: formData.startDate,
-        endDate: formData.endDate
+        startDate: adjustDate(formData.startDate),
+        endDate: adjustDate(formData.endDate)
       })
     };
 
