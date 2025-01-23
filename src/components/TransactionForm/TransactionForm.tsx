@@ -78,6 +78,16 @@ export const TransactionForm = () => {
     });
   };
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>, dateType: 'date' | 'startDate' | 'endDate') => {
+    const newDate = new Date(e.target.value);
+    if (!isNaN(newDate.getTime())) {
+      setFormData(prev => ({ 
+        ...prev, 
+        [dateType]: newDate
+      }));
+    }
+  };
+
   return (
     <>
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -118,12 +128,12 @@ export const TransactionForm = () => {
               <label>Date de la transaction</label>
               <input
                 type="date"
-                value={formData.date.toISOString().split('T')[0]}
-                onChange={e => setFormData(prev => ({ 
-                  ...prev, 
-                  date: new Date(e.target.value) 
-                }))}
+                value={formData.date.toLocaleDateString('fr-CA')}
+                onChange={e => handleDateChange(e, 'date')}
                 className={styles.dateInput}
+                min="1900-01-01"
+                max="2100-12-31"
+                onKeyDown={e => e.preventDefault()}
               />
             </div>
           ) : (
@@ -146,12 +156,11 @@ export const TransactionForm = () => {
                   <label>Date de début</label>
                   <input
                     type="date"
-                    value={formData.startDate.toISOString().split('T')[0]}
-                    onChange={e => setFormData(prev => ({ 
-                      ...prev, 
-                      startDate: new Date(e.target.value) 
-                    }))}
+                    value={formData.startDate.toLocaleDateString('fr-CA')}
+                    onChange={e => handleDateChange(e, 'startDate')}
                     className={styles.dateInput}
+                    min="1900-01-01"
+                    max="2100-12-31"
                   />
                 </div>
 
@@ -159,13 +168,11 @@ export const TransactionForm = () => {
                   <label>Date de fin</label>
                   <input
                     type="date"
-                    value={formData.endDate.toISOString().split('T')[0]}
-                    onChange={e => setFormData(prev => ({ 
-                      ...prev, 
-                      endDate: new Date(e.target.value) 
-                    }))}
-                    min={formData.startDate.toISOString().split('T')[0]}
+                    value={formData.endDate.toLocaleDateString('fr-CA')}
+                    onChange={e => handleDateChange(e, 'endDate')}
                     className={styles.dateInput}
+                    min={formData.startDate.toLocaleDateString('fr-CA')}
+                    max="2100-12-31"
                   />
                 </div>
               </div>
@@ -182,6 +189,8 @@ export const TransactionForm = () => {
             step="0.01"
             placeholder="50.65"
             max={9999}
+            onWheel={e => e.target.blur()}
+            className={styles.amountInput}
           />
           <span className={styles.currencySymbol}>€</span>
         </div>
