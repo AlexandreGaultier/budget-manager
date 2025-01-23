@@ -1,5 +1,6 @@
 .form {
-  background-color: #3d3d3d;
+  width: 100%;
+  background-color: var(--surface-color);
   border-radius: 12px;
   padding: 1.5rem;
   border: 1px solid var(--border-color);
