@@ -161,6 +161,7 @@ export const TransactionForm = () => {
                     className={styles.dateInput}
                     min="1900-01-01"
                     max="2100-12-31"
+                    onKeyDown={e => e.preventDefault()}
                   />
                 </div>
 
@@ -173,6 +174,7 @@ export const TransactionForm = () => {
                     className={styles.dateInput}
                     min={formData.startDate.toLocaleDateString('fr-CA')}
                     max="2100-12-31"
+                    onKeyDown={e => e.preventDefault()}
                   />
                 </div>
               </div>
