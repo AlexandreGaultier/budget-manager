@@ -97,4 +97,8 @@
     flex-direction: column;
     max-width: 100%;
   }
+
+  .app {
+    padding: 1rem;
+  }
 }
