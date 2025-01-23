@@ -31,16 +31,9 @@ export const TransactionList = () => {
 
   const uniqueCategories = Array.from(new Set(
     currentTransactions
-      .filter(t => selectedType === 'all' || t.type === selectedType)
+      .filter(t => t.category && t.category !== '')
       .map(t => t.category)
-  )).map(categoryId => {
-    const category = categories.find(cat => cat.id === categoryId);
-    return {
-      id: categoryId,
-      name: category?.name || 'Non catégorisé',
-      icon: category?.icon || '📋'
-    };
-  });
+  ));
 
   const getCategoryInfo = (categoryId: string) => {
     const category = categories.find(cat => cat.id === categoryId);
@@ -54,6 +47,16 @@ export const TransactionList = () => {
     if (!transaction.isRecurring) {
       if (window.confirm(`Êtes-vous sûr de vouloir supprimer la transaction "${transaction.description}" ?`)) {
         deleteTransaction(transaction.id);
+        
+        // Vérifie si c'était la dernière transaction de la catégorie filtrée
+        const remainingTransactionsInCategory = filteredTransactions
+          .filter(t => t.id !== transaction.id)
+          .filter(t => t.category === selectedCategory)
+          .length;
+
+        if (remainingTransactionsInCategory === 0) {
+          setSelectedCategory(null); // Réinitialise le filtre de catégorie
+        }
       }
       return;
     }
@@ -67,8 +70,33 @@ export const TransactionList = () => {
 
     if (choice === 'single') {
       deleteTransaction(deletingTransaction.id);
+      
+      // Même vérification pour les transactions récurrentes
+      const remainingTransactionsInCategory = filteredTransactions
+        .filter(t => t.id !== deletingTransaction.id)
+        .filter(t => t.category === selectedCategory)
+        .length;
+
+      if (remainingTransactionsInCategory === 0) {
+        setSelectedCategory(null);
+      }
     } else if (choice === 'all') {
       deleteRecurringTransactions(deletingTransaction);
+      
+      // Vérification similaire pour la suppression en masse
+      const remainingTransactionsInCategory = currentTransactions
+        .filter(t => t.category === selectedCategory)
+        .filter(t => 
+          t.description !== deletingTransaction.description ||
+          !t.isRecurring ||
+          t.startDate?.toString() !== deletingTransaction.startDate?.toString() ||
+          t.endDate?.toString() !== deletingTransaction.endDate?.toString()
+        )
+        .length;
+
+      if (remainingTransactionsInCategory === 0) {
+        setSelectedCategory(null);
+      }
     }
 
     setDeletingTransaction(null);
@@ -133,16 +161,21 @@ export const TransactionList = () => {
             >
               Toutes les catégories
             </button>
-            {uniqueCategories.map(category => (
-              <button
-                key={category.id}
-                className={`${styles.filterChip} ${selectedCategory === category.id ? styles.active : ''}`}
-                onClick={() => setSelectedCategory(category.id)}
-              >
-                <span className={styles.filterIcon}>{category.icon}</span>
-                {category.name}
-              </button>
-            ))}
+            {uniqueCategories.map(categoryId => {
+              const { name, icon } = getCategoryInfo(categoryId);
+              if (name === 'Non catégorisé') return null;
+
+              return (
+                <button
+                  key={categoryId}
+                  className={`${styles.filterChip} ${selectedCategory === categoryId ? styles.active : ''}`}
+                  onClick={() => setSelectedCategory(categoryId === selectedCategory ? null : categoryId)}
+                >
+                  <span className={styles.filterIcon}>{icon}</span>
+                  {name}
+                </button>
+              );
+            }).filter(Boolean)}
           </div>
           <div className={`${styles.filterTotal} ${filteredTotal >= 0 ? styles.positive : styles.negative}`}>
             Total: {formatCurrency(filteredTotal)}
