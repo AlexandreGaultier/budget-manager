@@ -198,7 +198,7 @@ export const TransactionForm = () => {
             step="0.01"
             placeholder="50.65"
             max={9999}
-            onWheel={e => e.target.blur()}
+            onWheel={(e: React.WheelEvent<HTMLInputElement>) => e.currentTarget.blur()}
             className={styles.amountInput}
           />
           <span className={styles.currencySymbol}>€</span>
