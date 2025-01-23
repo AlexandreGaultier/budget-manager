@@ -44,6 +44,14 @@
   border: 2px solid var(--border-color);
   border-radius: 12px;
   color: var(--text-primary);
+  -moz-appearance: textfield; /* Firefox */
+}
+
+/* Cache les flèches pour Chrome, Safari, Edge, Opera */
+.amountInput input::-webkit-outer-spin-button,
+.amountInput input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .currencySymbol {
