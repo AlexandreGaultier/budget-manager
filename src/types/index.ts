@@ -6,7 +6,9 @@ export interface Transaction {
   description: string;
   date: Date;
   isRecurring: boolean;
-  recurringDay?: number;
+  frequency?: 'daily' | 'weekly' | 'monthly';
+  startDate?: Date;
+  endDate?: Date;
 }
 
 export interface Category {

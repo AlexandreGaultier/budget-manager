@@ -3,6 +3,13 @@ import { Transaction, Category, MonthlyBudget } from '../types';
 import { defaultCategories } from '../data/defaultCategories';
 
 interface BudgetContextType {
+  selectedDate: Date;
+  viewMode: 'month' | 'year';
+  setViewMode: (mode: 'month' | 'year') => void;
+  goToPreviousPeriod: () => void;
+  goToNextPeriod: () => void;
+  selectDate: (date: Date) => void;
+  getTransactions: () => Transaction[];
   transactions: Transaction[];
   categories: Category[];
   currentBudget: MonthlyBudget;
@@ -10,6 +17,8 @@ interface BudgetContextType {
   addCategory: (category: Omit<Category, 'id'>) => void;
   deleteTransaction: (id: string) => void;
   deleteCategory: (id: string) => void;
+  updateTransaction: (id: string, updatedData: Partial<Omit<Transaction, 'id'>>) => void;
+  deleteRecurringTransactions: (transaction: Transaction) => void;
 }
 
 const BudgetContext = createContext<BudgetContextType | null>(null);
@@ -27,7 +36,7 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const [categories, setCategories] = useState<Category[]>(() => {
-    const savedCategories = localStorage.getItem('categories');
+    const savedCategories = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
     return savedCategories ? JSON.parse(savedCategories) : defaultCategories;
   });
 
@@ -44,6 +53,9 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     };
   });
 
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [viewMode, setViewMode] = useState<'month' | 'year'>('month');
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
   }, [transactions]);
@@ -56,12 +68,60 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(STORAGE_KEYS.CURRENT_BUDGET, JSON.stringify(currentBudget));
   }, [currentBudget]);
 
-  const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
-    const newTransaction = {
-      ...transaction,
-      id: crypto.randomUUID()
-    };
-    setTransactions(prev => [...prev, newTransaction]);
+  const addTransaction = (transactionData: Omit<Transaction, 'id'>) => {
+    if (!transactionData.isRecurring) {
+      const newTransaction = {
+        ...transactionData,
+        id: crypto.randomUUID()
+      };
+      setTransactions(prev => [...prev, newTransaction]);
+      return;
+    }
+
+    const newTransactions: Transaction[] = [];
+    const startDate = new Date(transactionData.startDate!);
+    const endDate = new Date(transactionData.endDate!);
+    let currentDate = new Date(startDate);
+
+    newTransactions.push({
+      ...transactionData,
+      id: crypto.randomUUID(),
+      date: new Date(startDate),
+    });
+
+    switch (transactionData.frequency) {
+      case 'daily':
+        currentDate.setDate(currentDate.getDate() + 1);
+        break;
+      case 'weekly':
+        currentDate.setDate(currentDate.getDate() + 7);
+        break;
+      case 'monthly':
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        break;
+    }
+
+    while (currentDate <= endDate) {
+      newTransactions.push({
+        ...transactionData,
+        id: crypto.randomUUID(),
+        date: new Date(currentDate),
+      });
+
+      switch (transactionData.frequency) {
+        case 'daily':
+          currentDate.setDate(currentDate.getDate() + 1);
+          break;
+        case 'weekly':
+          currentDate.setDate(currentDate.getDate() + 7);
+          break;
+        case 'monthly':
+          currentDate.setMonth(currentDate.getMonth() + 1);
+          break;
+      }
+    }
+
+    setTransactions(prev => [...prev, ...newTransactions]);
   };
 
   const addCategory = (category: Omit<Category, 'id'>) => {
@@ -69,15 +129,83 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
       ...category,
       id: crypto.randomUUID()
     };
-    setCategories(prev => [...prev, newCategory]);
+    const updatedCategories = [...categories, newCategory];
+    setCategories(updatedCategories);
+    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(updatedCategories));
   };
 
   const deleteTransaction = (id: string) => {
     setTransactions(prev => prev.filter(t => t.id !== id));
   };
 
+  const deleteRecurringTransactions = (transaction: Transaction) => {
+    setTransactions(prev => prev.filter(t => 
+      !(t.description === transaction.description &&
+        t.isRecurring &&
+        t.startDate?.toString() === transaction.startDate?.toString() &&
+        t.endDate?.toString() === transaction.endDate?.toString())
+    ));
+  };
+
   const deleteCategory = (id: string) => {
-    setCategories(prev => prev.filter(c => c.id !== id));
+    const categoryToDelete = categories.find(cat => cat.id === id);
+    
+    if (categoryToDelete?.isDefault) {
+      alert("Les catégories par défaut ne peuvent pas être supprimées.");
+      return;
+    }
+
+    const updatedCategories = categories.filter(c => c.id !== id);
+    setCategories(updatedCategories);
+    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(updatedCategories));
+  };
+
+  const updateTransaction = (id: string, updatedData: Partial<Omit<Transaction, 'id'>>) => {
+    setTransactions(prev => prev.map(transaction => 
+      transaction.id === id 
+        ? { ...transaction, ...updatedData }
+        : transaction
+    ));
+  };
+
+  const goToPreviousPeriod = () => {
+    setSelectedDate(prevDate => {
+      const newDate = new Date(prevDate);
+      if (viewMode === 'month') {
+        newDate.setMonth(prevDate.getMonth() - 1);
+      } else {
+        newDate.setFullYear(prevDate.getFullYear() - 1);
+      }
+      return newDate;
+    });
+  };
+
+  const goToNextPeriod = () => {
+    setSelectedDate(prevDate => {
+      const newDate = new Date(prevDate);
+      if (viewMode === 'month') {
+        newDate.setMonth(prevDate.getMonth() + 1);
+      } else {
+        newDate.setFullYear(prevDate.getFullYear() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  const selectDate = (date: Date) => {
+    setSelectedDate(date);
+  };
+
+  const getTransactions = () => {
+    return transactions.filter(transaction => {
+      const transactionDate = new Date(transaction.date);
+      if (viewMode === 'month') {
+        return transactionDate.getMonth() === selectedDate.getMonth() && 
+               transactionDate.getFullYear() === selectedDate.getFullYear();
+      } else {
+        return transactionDate.getFullYear() === selectedDate.getFullYear();
+      }
+    });
   };
 
   return (
@@ -89,7 +217,16 @@ export const BudgetProvider = ({ children }: { children: ReactNode }) => {
         addTransaction,
         addCategory,
         deleteTransaction,
-        deleteCategory
+        deleteRecurringTransactions,
+        deleteCategory,
+        updateTransaction,
+        selectedDate,
+        viewMode,
+        setViewMode,
+        goToPreviousPeriod,
+        goToNextPeriod,
+        selectDate,
+        getTransactions,
       }}
     >
       {children}

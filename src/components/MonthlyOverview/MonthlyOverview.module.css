@@ -1,38 +1,203 @@
 .overview {
+  width: 100%;
   padding: 1.5rem;
   background-color: var(--surface-color);
   border-radius: 12px;
 }
 
+.navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dateSelectors {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.2rem;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.viewToggle {
+  display: flex;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.toggleButton {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.toggleButton.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.monthPicker {
+  width: 150px;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.yearPicker {
+  width: 120px;
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: center;
+  font-size: 1rem;
+  appearance: none;
+  
+  /* Style de la flèche personnalisée */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px;
+}
+
+/* Styles pour les options du select */
+.yearPicker option {
+  background-color: var(--surface-color);
+  color: var(--text-primary);
+  padding: 12px;
+  text-align: center;
+}
+
+.yearPicker:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.monthPicker:hover, .yearPicker:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  gap: 1rem;
   margin-top: 1.5rem;
 }
 
 .stat {
-  padding: 1.5rem;
-  background-color: rgba(255, 255, 255, 0.05);
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
-  text-align: center;
   border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
 }
 
 .stat h3 {
-  color: var(--text-secondary);
   font-size: 0.875rem;
+  color: var(--text-secondary);
   margin-bottom: 0.5rem;
+}
+
+.stat p {
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .income {
   color: var(--success-color);
-  font-weight: bold;
-  font-size: 1.5rem;
 }
 
 .expense {
   color: var(--error-color);
-  font-weight: bold;
-  font-size: 1.5rem;
 } 
+
+
+/* Ajout des styles responsive */
+@media (max-width: 768px) {
+  .navigation {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .dateSelectors {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .viewToggle {
+    width: 100%;
+  }
+
+  .toggleButton {
+    flex: 1;
+  }
+
+  .monthPicker,
+  .yearPicker {
+    width: 100%;
+  }
+
+  .navButton {
+    width: 100%;
+  }
+
+  .stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .stat {
+    width: 100%;
+    text-align: center;
+  }
+
+  .stat h3 {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat p {
+    font-size: 1.2rem;
+  }
+
+  .income {
+    color: #34d399; /* Vert un peu plus clair pour meilleur contraste sur mobile */
+  }
+
+  .expense {
+    color: #f87171; /* Rouge un peu plus clair pour meilleur contraste sur mobile */
+  }
+}
