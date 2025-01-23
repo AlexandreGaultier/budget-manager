@@ -80,3 +80,11 @@
 .modalCancelButton:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
+
+@media (max-width: 768px) {
+  .modalContent {
+    width: 100%;
+    margin: 0 2rem;
+  }
+}
+

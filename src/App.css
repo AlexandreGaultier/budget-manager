@@ -25,7 +25,6 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
@@ -73,21 +72,33 @@
 }
 
 .app h1 {
+  width: 100%;
   color: var(--text-primary);
   margin-bottom: 2rem;
   font-size: 2.5rem;
   font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .content {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+  width: 100%;
+  max-width: 75%;
+  display: flex;
+  flex-direction: row;
   gap: 2rem;
   margin-top: 2rem;
 }
 
 @media (max-width: 768px) {
   .content {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .app {
+    padding: 1rem;
   }
 }

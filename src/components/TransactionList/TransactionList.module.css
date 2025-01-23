@@ -1,8 +1,9 @@
 .container {
   background-color: var(--surface-color);
-  max-width: 700px;
   border-radius: 12px;
   padding: 1.5rem;
+  width: 100%;
+  min-width: 750px;
 }
 
 .list {
@@ -391,4 +392,70 @@
 .modalButtons button:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .container {
+    min-width: 100%;
+  }
+  .recurringBadge {
+    text-align: start;
+    padding: 0.2rem ;
+    margin: 0.1rem ;
+    font-size: 0.6rem;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .transactionLeft {
+    width: 100%;
+  }
+
+  .transactionMain {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .filtersContainer {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .typeFilters {
+    gap: 0.25rem;
+  }
+
+  .typeButton {
+    padding: 0.35rem;
+    font-size: 0.8rem;
+  }
+
+  .filterHeader {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .filtersScroll {
+    width: 100%;
+    gap: 0.25rem;
+    padding: 0.15rem;
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .filtersScroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filterTotal {
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+  }
 }
